@@ -13,6 +13,7 @@ struct voiture
     int posX, posY;
 };
 
+//Cette fonction permet de faire avancer le tram tout en gérant les sens de ciruclation
 void bouge_tram1(int posX, int posY, int *sens, int numero, int i){
     //Fonction qui s'execute apres le temps de fin.
     printf("\033[%d;%dH🚌 🚌 🚌 \n",posX,posY);
@@ -23,6 +24,7 @@ void bouge_tram1(int posX, int posY, int *sens, int numero, int i){
         *sens=0;
 }
 
+//Cette fonction permet de gérer l'effacement du tram précédent.
 void bouge_tram2(int posX,int* posY, int sens, int numero){
     //Fonction qui s'execute apres l'ecoulement du temps.
     printf("\033[1;91m");
@@ -32,13 +34,19 @@ void bouge_tram2(int posX,int* posY, int sens, int numero){
         *posY= *posY+1;
     else if(sens==0 && numero==1)
         *posY= *posY-1;
-    
+
     else if(sens==1 && numero==0)
         *posY = *posY-1;
     else if(sens==1 && numero==1)
         *posY = *posY+1;
 }
 
+
+/*
+ * Cette fonction va s'occuper de gérer les feux rouges
+ * Lorsque les feux rouges sont allumés dans le nord de la circulation il le sont aussi dans l'est
+ * Et le feu du sud est allumé
+ */
 void gestion_feu_rouge(int allume){
     //Feu rouge
     if(allume == 1)
@@ -57,6 +65,7 @@ void gestion_feu_rouge(int allume){
     printf("\033[0m");
 }
 
+//Pour des raisons de simplification, le feu passe a l'orange a chaque fois que l'on passe du feu vert au rouge et inversement.
 void gestion_feu_orange(int allume){
     //Feu orange
     if(allume == 1)
@@ -72,6 +81,7 @@ void gestion_feu_orange(int allume){
     printf("\033[0m");
 }
 
+// Cette fonction est l'inverse de la fonction feu rouge
 void gestion_feu_vert(int allume){
     //Feu Vert 
     if(allume == 1)
@@ -92,6 +102,121 @@ void gestion_feu_vert(int allume){
     printf("\033[0m");
 }
 
+//Cette fonction permet de generer automatiquement les informations concernant le vehicule.
+void genere_infos(unsigned char *infos){
+    //int y=0;
+    //y=rand()%(240-16)+16;
+    *infos = (1+4+8+16+32+128);
+}
+
+
+//Cette fonction permet de connaitre la valeur d'un bit à la position donné.
+unsigned char valeur_bit(unsigned char info, int numero){
+    unsigned char val;
+    switch(numero){
+        case 0:
+            val = ((info>>numero)&1) ? '1':'0';
+            break;
+        case 1:
+            val = ((info>>numero)&1) ? '1':'0';
+            break;
+        case 2:
+            val = ((info>>numero)&1) ? '1':'0';
+            break;
+        case 3:
+            val = ((info>>numero)&1) ? '1':'0';
+            break;
+        case 4:
+            val = ((info>>numero)&1) ? '1':'0';
+            break;
+        case 5:
+            val = ((info>>numero)&1) ? '1':'0';
+            break;
+        case 6:
+            val = ((info>>numero)&1) ? '1':'0';
+            break;
+        case 7:
+            val = ((info>>numero)&1) ? '1':'0';
+            break;
+        case 8:
+            val = ((info>>numero)&1) ? '1':'0';
+            break;
+        default:
+            val='?';
+            break;
+    }
+    return val;
+}
+
+void place_voiture(VEHICULE *voiture){
+    if(valeur_bit(voiture->infos, 4)=='1' && valeur_bit(voiture->infos,5)=='0' && valeur_bit(voiture->infos,6)=='0' && valeur_bit(voiture->infos,7)=='0'){
+        //Voiture qui pars du Sud vers le Sud
+        voiture->posX=36;
+        voiture->posY=24;
+    }
+    if(valeur_bit(voiture->infos, 4)==0 && valeur_bit(voiture->infos,5)==1 && valeur_bit(voiture->infos,6)==0 && valeur_bit(voiture->infos,7)==0){
+        //Voiture qui pars du Sud vers l'Est
+        voiture->posX=36;
+        voiture->posY=22;
+    }
+    if(valeur_bit(voiture->infos, 4)==1 && valeur_bit(voiture->infos,5)==1 && valeur_bit(voiture->infos,6)==0 && valeur_bit(voiture->infos,7)==0){
+        //Voiture qui pars du Sud vers le Nord
+        voiture->posX=36;
+        voiture->posY=22;
+    }
+    if(valeur_bit(voiture->infos, 4)==0 && valeur_bit(voiture->infos,5)==0 && valeur_bit(voiture->infos,6)==1 && valeur_bit(voiture->infos,7)==0){
+        //Voiture qui pars du Sud vers l'Ouest
+        voiture->posX=36;
+        voiture->posY=22;
+    }
+    if(valeur_bit(voiture->infos, 4)==1 && valeur_bit(voiture->infos,5)==0 && valeur_bit(voiture->infos,6)==1 && valeur_bit(voiture->infos,7)==0 ){
+        //Voiture qui pars de l'Ouest vers le l'Ouest
+        voiture->posX=36;
+        voiture->posY=22;
+    }
+    if(valeur_bit(voiture->infos, 4)==0 && valeur_bit(voiture->infos,5)==1 && valeur_bit(voiture->infos,6)==1 && valeur_bit(voiture->infos,7)==0){
+        //Voiture qui pars de l'Ouset vers le Sud
+        voiture->posX=36;
+        voiture->posY=22;
+    }
+    if(valeur_bit(voiture->infos, 4)==1 && valeur_bit(voiture->infos,5)==1 && valeur_bit(voiture->infos,6)==1 && valeur_bit(voiture->infos,7)==0 ){
+        //Voiture qui pars de l'Ouest vers l'Est
+        voiture->posX=36;
+        voiture->posY=22;
+    }
+    if(valeur_bit(voiture->infos, 4)==0 && valeur_bit(voiture->infos,5)==0 && valeur_bit(voiture->infos,6)==0 && valeur_bit(voiture->infos,7)==1 ){
+        //Voiture qui pars de l'Ouest vers le Nord
+        voiture->posX=36;
+        voiture->posY=22;
+    }
+    if(valeur_bit(voiture->infos, 4)==1 && valeur_bit(voiture->infos,5)==0 && valeur_bit(voiture->infos,6)==0 && valeur_bit(voiture->infos,7)==1 ){
+        //Voiture qui pars de l'Est vers l'Est
+        voiture->posX=36;
+        voiture->posY=22;
+    }
+    if(valeur_bit(voiture->infos, 4)==0 && valeur_bit(voiture->infos,5)==1 && valeur_bit(voiture->infos,6)==0 && valeur_bit(voiture->infos,7)==1 ){
+        //Voiture qui pars de l'Est vers le Nord
+        voiture->posX=36;
+        voiture->posY=22;
+    }
+    if(valeur_bit(voiture->infos, 4)=='1' && valeur_bit(voiture->infos,5)=='1' && valeur_bit(voiture->infos,6)=='0' && valeur_bit(voiture->infos,7)=='1' ){
+        //Voiture qui pars de l'Est vers l'Ouest
+        voiture->posX=24;
+        voiture->posY=36;
+    }
+    if(valeur_bit(voiture->infos, 4)==0 && valeur_bit(voiture->infos,5)==0 && valeur_bit(voiture->infos,6)==1 && valeur_bit(voiture->infos,7)==1 ){
+        //Voiture qui pars de l'Est vers le Sud
+        voiture->posX=36;
+        voiture->posY=24;
+    }
+}
+
+void affiche_voiture(VEHICULE voiture){
+    //affiche la voiture a sa position
+    printf("  %d ; %d", voiture.posX, voiture.posY); 
+    printf("\033[%d;%dH🚘\n",voiture.posY,voiture.posX); //Pos x,y
+}
+
 int main(){
     //Corps du code
     srand(time(NULL));
@@ -104,6 +229,7 @@ int main(){
 
     printf("Ouverture du fichier, demarrage de la lecture et démarrage des moteurs...\n");
 
+    //Cette première boucle while vient lire la carte et pose le décor ;-)
     while((c=fgetc(carte))!=EOF){
         //printf("%c",c);
         if(c=='o')
@@ -140,9 +266,22 @@ int main(){
     int x=13, y=0, y2=80, x2=15;
     int tramX1=18, tramY1=0, tramX2=20, tramY2=75;
     int sens_tram=0;
+    unsigned char temp = temp^temp;;
     rouge.posX=x;
     rouge.posY=y;
+    rouge.car=' ';
     gestion_feu_rouge(0);
+    genere_infos(&rouge.infos);
+
+    for(y=7;y>=0;y--){
+        temp = valeur_bit(rouge.infos, y);
+        printf("%c",temp);
+    } 
+   
+    place_voiture(&rouge); 
+    
+    affiche_voiture(rouge);
+   
     //Boucle infini permettant la visualisation du traffic
     while(i<240){
         //printf("\033[%d;%dH🚘\n",rouge.posX,rouge.posY);
@@ -181,7 +320,7 @@ int main(){
         //printf("\033[%d;%dH  \n",rouge.posX,rouge.posY);
         rouge.posY++;
         y2--;
-        
+
         //On fait avancer notre compteur pour savoir ou on en est dans le temps.
         i++;
     }
