@@ -218,13 +218,36 @@ void place_voiture(VEHICULE *voiture){
     }
 }
 
+void voiture_haut(VEHICULE *voiture){
+//Fonction pour faire avancer une voiture vers le haut
+    int temp;
+    temp=voiture->posY;
+    voiture->posY--;
+    printf("\033[%d;%dH🚘",voiture->posY,voiture->posX);
+    printf("\033[%d;%dH  ",temp,voiture->posX);
+
+}
+
+void voiture_bas(VEHICULE *voiture){
+//Fonction pour faire avancer une voiture vers le bas
+    printf("\033[%d;%dH \n🚘",voiture->posY,voiture->posX);
+}
+void voiture_gauche(VEHICULE *voiture){
+//Fonction pour faire avancer une voiture vers la gauche
+    printf("\033[%d;%dH🚘  ",voiture->posY,voiture->posX);
+}
+void voiture_droite(VEHICULE *voiture){
+//Fonction pour faire avancer une voiture vers la droite
+    printf("\033[%d;%dH 🚘",voiture->posY,voiture->posX);
+}
+
 void secteur_1(){
     //Premier tronçon qui se trouve sur le nord
 }
 void secteur_2(VEHICULE *voiture){
     //C'est la route qui permet de sortir à l'est et qui vient de l'ouest
     voiture->posX++;
-    printf("\033[%d;%dH 🚘",voiture->posY,voiture->posX);
+    voiture_droite(voiture);
 }
 void secteur_3(){
     //C'est le carrefour avec le tram
@@ -232,15 +255,16 @@ void secteur_3(){
 void secteur_4(VEHICULE *voiture){
     //C'est la route qui permet de sortir à l'ouest et qui vient de l'est
     voiture->posX--;
-    printf("\033[%d;%dH🚘 ",voiture->posY,voiture->posX);
+    voiture_gauche(voiture);
 }
 void secteur_5(VEHICULE* voiture){
     //C'est la route du Sud qui vient et qui pars du Sud
-    int temp;
-    temp=voiture->posY;
-    voiture->posY--;
-    printf("\033[%d;%dH🚘",voiture->posY,voiture->posX);
-    printf("\033[%d;%dH  ",temp,voiture->posX);
+    //int temp;
+    //temp=voiture->posY;
+    //voiture->posY--;
+    voiture_haut(voiture);
+//    printf("\033[%d;%dH🚘",voiture->posY,voiture->posX);
+//    printf("\033[%d;%dH  ",temp,voiture->posX);
 }
   
 void affiche_voiture(VEHICULE voiture){
@@ -349,6 +373,10 @@ int main(){
         else if(rouge.posY<=36 && rouge.posY>=29){
             printf("mouton");
             secteur_5(&rouge);
+        }
+        else if(rouge.posX>=19 && rouge.posX<=40){
+            printf("carrefour");
+
         }
         //printf("toto");
         //affiche_voiture(rouge);
