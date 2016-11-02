@@ -12,6 +12,7 @@ struct voiture
     unsigned char infos; /*Les infos doivent etre stockes sur les 8 bits*/
     int posX, posY;
 };
+void affiche_voiture(VEHICULE* voiture);
 
 //Cette fonction permet de faire avancer le tram tout en gérant les sens de ciruclation
 void bouge_tram1(int posX, int posY, int *sens, int numero, int i){
@@ -108,7 +109,8 @@ void genere_infos(unsigned char *infos){
     //le tableau ci-dessous représente les 12 trajets possibles pour un véhicule.
     int trajets[12]={16,32,48,64,80,96,112,128,144,160,176,192};
     y=rand()%12;
-    *infos = (1+4+8)+trajets[y];
+    //*infos = (1+4+8)+trajets[y];
+    *infos = (1+4+8)+(128+64);
 }
 
 
@@ -218,27 +220,15 @@ void place_voiture(VEHICULE *voiture){
     }
 }
 
-void voiture_haut(VEHICULE *voiture){
-//Fonction pour faire avancer une voiture vers le haut
-    int temp;
-    temp=voiture->posY;
-    voiture->posY--;
-    printf("\033[%d;%dH🚘",voiture->posY,voiture->posX);
-    printf("\033[%d;%dH  ",temp,voiture->posX);
-
+void affiche_vide(VEHICULE *voiture){
+    //Fonction pour faire avancer une voiture vers la droite
+    printf("\033[%d;%dH  ",voiture->posY,voiture->posX);
+    usleep(2);
 }
 
-void voiture_bas(VEHICULE *voiture){
-//Fonction pour faire avancer une voiture vers le bas
-    printf("\033[%d;%dH \n🚘",voiture->posY,voiture->posX);
-}
-void voiture_gauche(VEHICULE *voiture){
-//Fonction pour faire avancer une voiture vers la gauche
-    printf("\033[%d;%dH🚘  ",voiture->posY,voiture->posX);
-}
-void voiture_droite(VEHICULE *voiture){
-//Fonction pour faire avancer une voiture vers la droite
-    printf("\033[%d;%dH 🚘",voiture->posY,voiture->posX);
+void affiche_voiture(VEHICULE* voiture){
+    //Cette fonction permet d'afficher un vehicule a l'ecran
+    printf("\033[%d;%dH🚘 ",voiture->posY,voiture->posX);
 }
 
 void secteur_1(){
@@ -246,31 +236,59 @@ void secteur_1(){
 }
 void secteur_2(VEHICULE *voiture){
     //C'est la route qui permet de sortir à l'est et qui vient de l'ouest
+    affiche_vide(voiture);
     voiture->posX++;
-    voiture_droite(voiture);
+    affiche_voiture(voiture);
 }
 void secteur_3(){
     //C'est le carrefour avec le tram
 }
 void secteur_4(VEHICULE *voiture){
     //C'est la route qui permet de sortir à l'ouest et qui vient de l'est
+    affiche_vide(voiture);
     voiture->posX--;
-    voiture_gauche(voiture);
+    affiche_voiture(voiture);
 }
 void secteur_5(VEHICULE* voiture){
     //C'est la route du Sud qui vient et qui pars du Sud
-    //int temp;
-    //temp=voiture->posY;
-    //voiture->posY--;
-    voiture_haut(voiture);
-//    printf("\033[%d;%dH🚘",voiture->posY,voiture->posX);
-//    printf("\033[%d;%dH  ",temp,voiture->posX);
+    int temp;
+    temp=voiture->posY;
+    voiture->posY--;
+    printf("\033[%d;%dH🚘 ",voiture->posY,voiture->posX);
+    printf("\033[%d;%dH ",temp,voiture->posX);
 }
-  
-void affiche_voiture(VEHICULE voiture){
-    //Cette fonction permet d'afficher un vehicule a l'ecran
 
-    printf("\033[%d;%dH🚘 ",voiture.posY,voiture.posX);
+void secteur_6(VEHICULE* voiture){
+    affiche_vide(voiture);
+    voiture->posY++;
+    affiche_voiture(voiture);
+
+}
+
+void avance_voiture(VEHICULE* voiture, int feu){
+    //On gère l'avancée de la voiture test, puis apres on aura une boucle pour gérer tous les vehicules.
+    if(voiture->posX<=80 && voiture->posX>=40){
+        printf("chevre ");
+        secteur_4(voiture);
+    }
+    else if(voiture->posX>=0 && voiture->posX<=20){
+        printf("vache");
+        secteur_2(voiture);
+    }
+    else if(voiture->posY<=36 && voiture->posY>=29 && voiture->posX==28){
+        printf("mouton");
+        secteur_5(voiture);
+    }
+    else if(voiture->posX>=21 && voiture->posX<=23 && voiture->posY==25 && feu==1){
+        secteur_2(voiture);
+    }
+    else if(voiture->posX==24 && valeur_bit(voiture->infos,5)=='0' && valeur_bit(voiture->infos,6)=='1' && valeur_bit(voiture->infos,7)=='1' ){
+        secteur_6(voiture);
+    
+    }
+    else if(voiture->posY>=26 && voiture->posX==24){
+        secteur_6(voiture);
+    }
 }
 
 int main(){
@@ -319,9 +337,10 @@ int main(){
     }
     //Pour mettre a une position: printf("\033[%d;%dH🚘",45,12);
     //printf("\033[%d;%dH🚘",16,15);
-    int x=13, y=0, y2=80, x2=15;
+    int x=13, y=0, y2=80;
     int tramX1=18, tramY1=0, tramX2=20, tramY2=75;
     int sens_tram=0;
+    int feu=0;
     unsigned char temp = temp^temp;;
     rouge.posX=x;
     rouge.posY=y;
@@ -333,10 +352,10 @@ int main(){
         temp = valeur_bit(rouge.infos, y);
         printf("%c",temp);
     } 
-   
+
     place_voiture(&rouge); 
-    
-   
+
+
     //Boucle infini permettant la visualisation du traffic
     while(i<240){
 
@@ -351,39 +370,29 @@ int main(){
         if(i<40){
             gestion_feu_rouge(1);
             gestion_feu_vert(0);
+            feu =0;
         }
         else if(i==40){
             gestion_feu_rouge(0);
             gestion_feu_orange(1);
+            feu=0;
         }
         else if(i>42){
             gestion_feu_orange(0);
             gestion_feu_vert(1);
+            feu=1;
         }
-
-        //On gère l'avancée de la voiture test, puis apres on aura une boucle pour gérer tous les vehicules.
-        if(rouge.posX<=80 && rouge.posX>=40){
-            printf("chevre ");
-            secteur_4(&rouge);
-        }
-        else if(rouge.posX>=0 && rouge.posX<=19){
-            printf("vache");
-            secteur_2(&rouge);
-        }
-        else if(rouge.posY<=36 && rouge.posY>=29){
-            printf("mouton");
-            secteur_5(&rouge);
-        }
-        else if(rouge.posX>=19 && rouge.posX<=40){
-            printf("carrefour");
-
-        }
+        
+        if(rouge.posX>=0 && rouge.posX<=80 && rouge.posY>=0 && rouge.posY<=36)
+            avance_voiture(&rouge, feu);
+        else
+            affiche_vide(&rouge);
         //printf("toto");
         //affiche_voiture(rouge);
-        
-        
+
+
         usleep(100000);
-        
+
         y2--;
         //On fait avancer notre compteur pour savoir ou on en est dans le temps.
         i++;
