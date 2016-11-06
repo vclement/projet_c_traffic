@@ -109,8 +109,8 @@ void genere_infos(unsigned char *infos){
     //le tableau ci-dessous représente les 12 trajets possibles pour un véhicule.
     int trajets[12]={16,32,48,64,80,96,112,128,144,160,176,192};
     y=rand()%12;
-    //*infos = (1+4+8)+trajets[y];
-    *infos = (1+4+8)+(128+64);
+    *infos = (1+4+8)+trajets[y];
+    //*infos = (1+4+8)+(128+64);
 }
 
 
@@ -213,13 +213,18 @@ void place_voiture(VEHICULE *voiture){
         voiture->posX=0;
         voiture->posY=25;
     }
-    else{
+    else if(valeur_bit(voiture->infos, 4)=='1' && valeur_bit(voiture->infos,5)=='0' && valeur_bit(voiture->infos,6)=='0' && valeur_bit(voiture->infos,7)=='1' ){
         //Si on ne trouve pas ce que l'on veut, la voiture pars de l'ouest vers l'est
         voiture->posX=80;
         voiture->posY=13;
     }
-}
+    else{ 
+        //Si on ne trouve pas ce que l'on veut, la voiture pars de l'ouest vers l'est
+        voiture->posX=80;
+        voiture->posY=13;
 
+    }
+}
 void affiche_vide(VEHICULE *voiture){
     //Fonction pour faire avancer une voiture vers la droite
     printf("\033[%d;%dH  ",voiture->posY,voiture->posX);
@@ -267,28 +272,45 @@ void secteur_6(VEHICULE* voiture){
 
 void avance_voiture(VEHICULE* voiture, int feu){
     //On gère l'avancée de la voiture test, puis apres on aura une boucle pour gérer tous les vehicules.
-    if(voiture->posX<=80 && voiture->posX>=40){
-        printf("chevre ");
-        secteur_4(voiture);
-    }
-    else if(voiture->posX>=0 && voiture->posX<=20){
-        printf("vache");
-        secteur_2(voiture);
-    }
-    else if(voiture->posY<=36 && voiture->posY>=29 && voiture->posX==28){
-        printf("mouton");
-        secteur_5(voiture);
-    }
-    else if(voiture->posX>=21 && voiture->posX<=23 && voiture->posY==25 && feu==1){
-        secteur_2(voiture);
-    }
-    else if(voiture->posX==24 && valeur_bit(voiture->infos,5)=='0' && valeur_bit(voiture->infos,6)=='1' && valeur_bit(voiture->infos,7)=='1' ){
-        secteur_6(voiture);
     
-    }
-    else if(voiture->posY>=26 && voiture->posX==24){
-        secteur_6(voiture);
-    }
+        if(voiture->posX<=80 && voiture->posX>=40){
+            printf("chevre ");
+            secteur_4(voiture);
+        }
+        else if(voiture->posX>=0 && voiture->posX<=20){
+            printf("vache");
+            secteur_2(voiture);
+        }
+
+
+        else if(voiture->posY<=36 && voiture->posY>=29 && voiture->posX==28){
+            printf("mouton");
+            secteur_5(voiture);
+        }
+        else if(voiture->posY==28 && voiture->posX==28 && feu ==0){
+            secteur_5(voiture);
+            secteur_5(voiture);
+            secteur_5(voiture);
+        }
+        else if(voiture->posY==25 && voiture->posX>=28 && voiture->posX<=){
+            printf("tto") ;
+        }
+        else if(voiture->posX>=21 && voiture->posX<=23 && voiture->posY==25 && feu==1){
+            secteur_2(voiture);
+        }
+        else if(voiture->posX==24 && valeur_bit(voiture->infos,5)=='0' && valeur_bit(voiture->infos,6)=='1' && valeur_bit(voiture->infos,7)=='1' ){//Lorsque la voiture descend vers le Sud.
+            secteur_6(voiture);
+        }
+        else if(voiture->posX==36 && valeur_bit(voiture->infos,4)=='0' && valeur_bit(voiture->infos,5)=='0' && valeur_bit(voiture->infos,6)=='0' && valeur_bit(voiture->infos,7)=='0' && voiture->posY>0 ){
+            secteur_5(voiture);
+        }
+        else if(voiture->posX==36 && valeur_bit(voiture->infos,4)=='1' && valeur_bit(voiture->infos,5)=='0' && valeur_bit(voiture->infos,6)=='0' && valeur_bit(voiture->infos,7)=='1' && voiture->posY>0 )
+            secteur_4(voiture);//Voiture qui va vers le nord 
+        //else if()
+        else if(voiture->posY>=26 && voiture->posX==24){
+            secteur_6(voiture);
+        }
+    
 }
 
 int main(){
@@ -382,7 +404,7 @@ int main(){
             gestion_feu_vert(1);
             feu=1;
         }
-        
+
         if(rouge.posX>=0 && rouge.posX<=80 && rouge.posY>=0 && rouge.posY<=36)
             avance_voiture(&rouge, feu);
         else
