@@ -476,9 +476,11 @@ int main(){
     }
     j=0;
     int t;
+    
     //Boucle infini permettant la visualisation du traffic
     while(i<240){
         place_voiture(&voit[j]);
+           
         //On fait avancer le tram
         bouge_tram2(tramX1,&tramY1, sens_tram, 0);
         bouge_tram2(tramX2,&tramY2, sens_tram, 1);
@@ -514,14 +516,14 @@ int main(){
 
 
         for(t=0; t<j; t++){
-            if(voit[j].posX>0 && voit[j].posX<=80 && voit[j].posY>=0 && voit[j].posY<=36)
-                avance_voiture(&voit[j], feu);
+            if(voit[t].posX>0 && voit[t].posX<=80 && voit[t].posY>=0 && voit[t].posY<=36)
+                avance_voiture(&voit[t], feu);
             else
-                affiche_vide(&voit[j]);
+                affiche_vide(&voit[t]);
         }
         usleep(100000);
-
-        j++;
+        if(j<12)
+            j++;
         y2--;
         //On fait avancer notre compteur pour savoir ou on en est dans le temps.
         i++;
