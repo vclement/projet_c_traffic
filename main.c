@@ -110,7 +110,7 @@ void genere_infos(unsigned char *infos){
     int trajets[12]={16,32,48,64,80,96,112,128,144,160,176,192};
     y=rand()%12;
     *infos = (1+4+8)+trajets[y];
-    //*infos = (1+4+8)+(128+64);
+    //*infos = (1+4+8)+(128+32);
 }
 
 
@@ -195,22 +195,22 @@ void place_voiture(VEHICULE *voiture){
     }
     else  if(valeur_bit(voiture->infos, 4)=='1' && valeur_bit(voiture->infos,5)=='0' && valeur_bit(voiture->infos,6)=='0' && valeur_bit(voiture->infos,7)=='1' ){
         //Voiture qui pars de l'ouest vers l'Est
-        voiture->posX=0;
+        voiture->posX=1;
         voiture->posY=25;
     }
     else if(valeur_bit(voiture->infos, 4)=='0' && valeur_bit(voiture->infos,5)=='1' && valeur_bit(voiture->infos,6)=='0' && valeur_bit(voiture->infos,7)=='1' ){
         //Voiture qui pars de l'ouest vers le Nord
-        voiture->posX=0;
+        voiture->posX=1;
         voiture->posY=25;
     }
     else if(valeur_bit(voiture->infos, 4)=='1' && valeur_bit(voiture->infos,5)=='1' && valeur_bit(voiture->infos,6)=='0' && valeur_bit(voiture->infos,7)=='1' ){
         //Voiture qui pars de l'ouest vers l'Ouest
-        voiture->posX=0;
+        voiture->posX=1;
         voiture->posY=25;
     }
     else if(valeur_bit(voiture->infos, 4)=='0' && valeur_bit(voiture->infos,5)=='0' && valeur_bit(voiture->infos,6)=='1' && valeur_bit(voiture->infos,7)=='1' ){
         //Voiture qui pars de l'ouest vers le Sud
-        voiture->posX=0;
+        voiture->posX=1;
         voiture->posY=25;
     }
     else if(valeur_bit(voiture->infos, 4)=='1' && valeur_bit(voiture->infos,5)=='0' && valeur_bit(voiture->infos,6)=='0' && valeur_bit(voiture->infos,7)=='1' ){
@@ -273,72 +273,134 @@ void secteur_6(VEHICULE* voiture){
 void avance_voiture(VEHICULE* voiture, int feu){
     //On gère l'avancée de la voiture test, puis apres on aura une boucle pour gérer tous les vehicules.
     
-        if(voiture->posX<=80 && voiture->posX>=40){// Cas 6
-            printf("chevre ");
+        if(voiture->posX<=80 && voiture->posX>=37 && voiture->posY == 13){// Cas 6
+            //printf("chevre ");
             secteur_4(voiture);
         }
-        else if(voiture->posX>=0 && voiture->posX<=20){ // Cas 1
-            printf("vache");
+        if(voiture->posX>=-1 && voiture->posX<=23 && (voiture->posY >= 22 || voiture->posY <= 26)){ // Cas 1
+            //printf("vache");
             secteur_2(voiture);
         }
-        else if(voiture->posY<=36 && voiture->posY>=29 && voiture->posX==28){ // Cas 3
-            printf("mouton");
+        if(voiture->posY<=36 && voiture->posY>=26 && voiture->posX==28){ // Cas 3
+            //printf("mouton");
             secteur_5(voiture);
         }
-        else if(voiture->posX == 24 && voiture->posY<=36 && voiture->posY >= 25 ){ // Cas 2
+        if(voiture->posX == 24 && voiture->posY<=36 && voiture->posY >= 25 ){ // Cas 2
             secteur_6(voiture);
         }
-        else if(voiture->posX >= 25 && voiture->posX <36 && voiture->posY==24){// Cas 4
+        else if( voiture->posX == 24 && voiture->posY>=16 && voiture->posY<=22){//Cas 9
+            secteur_6(voiture);
+        }
+        if(voiture->posX >= 25 && voiture->posX <36 && voiture->posY==25){// Cas 4
             secteur_2(voiture);
         }
-        else if(voiture->posY == 24 && voiture->posX >37 && voiture->posX <81){// Cas 5
+        if(voiture->posY == 25 && voiture->posX >37 && voiture->posX <81){// Cas 5
             secteur_2(voiture);
         }
-        else if( (voiture->posY == 14 || voiture->posY == 12) && voiture->posX <= 35 && voiture->posX >= 23){// Cas 7
+        if( (voiture->posY == 15 || voiture->posY == 13) && voiture->posX <= 35 && voiture->posX > 24){// Cas 7
             secteur_4(voiture);
         }
-        else if( (voiture->posY == 14 || voiture->posY == 12) && voiture->posX <= 23 && voiture->posX >= 0  ){// Cas 8
+        if( (voiture->posY == 15 || voiture->posY == 13) && voiture->posX <= 23 && voiture->posX >= 1  ){// Cas 8
             secteur_4(voiture);
         }
-        else if( (voiture->posX == 32 || voiture->posX == 36) && voiture->posY <= 11 && voiture->posY >= 0  ){// Cas 11
+        if( (voiture->posX == 32 || voiture->posX == 36) && voiture->posY <= 12 && voiture->posY > 0  ){// Cas 11
             secteur_5(voiture);
         }
-        else if( voiture->posX == 24 && voiture->posY<=16 && voiture->posY>=21){//Cas 9
-            secteur_6(voiture);
-        }
-        else if( voiture->posX == 36 && voiture->posY <= 16 && voiture->posY>=21 ){//Cas 10
+        else if( voiture->posX == 36 && voiture->posY >= 16 && voiture->posY<=23 ){//Cas 10
             secteur_5(voiture);
         }
             
-        else if(voiture->posX==24 && voiture->posY == 24 && valeur_bit(voiture->infos,5)=='0' && valeur_bit(voiture->infos,6)=='1' && valeur_bit(voiture->infos,7)=='1' ){ //Cas 12
+        if(voiture->posX==24 && voiture->posY == 24 && valeur_bit(voiture->infos,5)=='0' && valeur_bit(voiture->infos,6)=='1' && valeur_bit(voiture->infos,7)=='1' ){ //Cas 12
             secteur_6(voiture);
+        }
+         
+        if(voiture->posX==36 && (voiture->posY == 13 || voiture->posY == 15)){//Cas 14
+            if(valeur_bit(voiture->infos,4)=='1' && valeur_bit(voiture->infos,5)=='1' && valeur_bit(voiture->infos,6)=='0' && valeur_bit(voiture->infos,7)=='0'  ){
+                secteur_5(voiture);
+                secteur_5(voiture);
+                secteur_5(voiture);
+            }
+            else if( valeur_bit(voiture->infos,4)=='0' && valeur_bit(voiture->infos,5)=='0' && valeur_bit(voiture->infos,6)=='0' && valeur_bit(voiture->infos,7)=='1' ){
+                secteur_5(voiture);
+                secteur_5(voiture);
+                secteur_5(voiture);
+            }
+            else if( valeur_bit(voiture->infos,4)=='0' && valeur_bit(voiture->infos,5)=='1' && valeur_bit(voiture->infos,6)=='0' && valeur_bit(voiture->infos,7)=='1' ){
+                secteur_5(voiture);
+                secteur_5(voiture);
+                secteur_5(voiture);
+            }
+            else 
+                secteur_4(voiture);
+        }
+
+        if(voiture->posX==24 && (voiture->posY == 13 || voiture->posY ==15)){//Cas 15
+            if(valeur_bit(voiture->infos,4)=='0' && valeur_bit(voiture->infos,5)=='0' && valeur_bit(voiture->infos,6)=='1' && valeur_bit(voiture->infos,7)=='0'  ){
+                secteur_4(voiture);
+            }
+            else if( valeur_bit(voiture->infos,4)=='1' && valeur_bit(voiture->infos,5)=='0' && valeur_bit(voiture->infos,6)=='1' && valeur_bit(voiture->infos,7)=='0' ){
+                secteur_4(voiture);
+            }
+            else if( valeur_bit(voiture->infos,4)=='1' && valeur_bit(voiture->infos,5)=='1' && valeur_bit(voiture->infos,6)=='0' && valeur_bit(voiture->infos,7)=='1' ){
+                secteur_4(voiture);
+            }
+            else{ 
+                secteur_6(voiture);
+                secteur_6(voiture);
+                secteur_6(voiture);
+            }
         }
         
-
-
-
-
-        else if(voiture->posY==28 && voiture->posX==28 && feu ==0){
-            secteur_5(voiture);
-            secteur_5(voiture);
-            secteur_5(voiture);
+        else if(voiture->posX==24 && voiture->posY == 23  ){//Cas 12
+            if(valeur_bit(voiture->infos,4)=='1' && valeur_bit(voiture->infos,5)=='0' && valeur_bit(voiture->infos,6)=='0' && valeur_bit(voiture->infos,7)=='0'  ){
+                secteur_6(voiture);            
+                secteur_6(voiture);
+                secteur_6(voiture);
+            }
+            else if( valeur_bit(voiture->infos,4)=='0' && valeur_bit(voiture->infos,5)=='1' && valeur_bit(voiture->infos,6)=='1' && valeur_bit(voiture->infos,7)=='0' ){
+                secteur_6(voiture);   
+                secteur_6(voiture);   
+                secteur_6(voiture);   
+            }         
+            else if( valeur_bit(voiture->infos,4)=='0' && valeur_bit(voiture->infos,5)=='0' && valeur_bit(voiture->infos,6)=='1' && valeur_bit(voiture->infos,7)=='1' ){
+                secteur_6(voiture);   
+                secteur_6(voiture);   
+                secteur_6(voiture);
+            }
+            else if( valeur_bit(voiture->infos,4)=='0' && valeur_bit(voiture->infos,5)=='1' && valeur_bit(voiture->infos,6)=='0' && valeur_bit(voiture->infos,7)=='1' ){
+                secteur_6(voiture);   
+                secteur_6(voiture);   
+                secteur_6(voiture);
+            }
+            else{ 
+                secteur_6(voiture);
+                secteur_6(voiture);
+                secteur_2(voiture);
+                secteur_2(voiture);
+                secteur_2(voiture);
+            }
         }
-        else if(voiture->posY==25 && voiture->posX>=28 && voiture->posX<= 0){
-            printf("tto") ;
+        
+        if(voiture->posX==36 && voiture->posY == 25){//Cas 13
+            if(valeur_bit(voiture->infos,4)=='1' && valeur_bit(voiture->infos,5)=='0' && valeur_bit(voiture->infos,6)=='0' && valeur_bit(voiture->infos,7)=='1'  ){
+                secteur_2(voiture);
+                secteur_2(voiture);
+            }
+            else if( valeur_bit(voiture->infos,4)=='1' && valeur_bit(voiture->infos,5)=='1' && valeur_bit(voiture->infos,6)=='1' && valeur_bit(voiture->infos,7)=='0' ){
+                secteur_2(voiture);
+                secteur_2(voiture);
+            }
+            else if( valeur_bit(voiture->infos,4)=='0' && valeur_bit(voiture->infos,5)=='1' && valeur_bit(voiture->infos,6)=='0' && valeur_bit(voiture->infos,7)=='0' ){
+                secteur_2(voiture);
+                secteur_2(voiture);
+            }
+            else{
+                secteur_5(voiture);
+                secteur_5(voiture);
+                secteur_5(voiture);
+            }
         }
-        else if(voiture->posX>=21 && voiture->posX<=23 && voiture->posY==25 && feu==1){
-            secteur_2(voiture);
-        }
-        else if(voiture->posX==36 && valeur_bit(voiture->infos,4)=='0' && valeur_bit(voiture->infos,5)=='0' && valeur_bit(voiture->infos,6)=='0' && valeur_bit(voiture->infos,7)=='0' && voiture->posY>0 ){
-            secteur_5(voiture);
-        }
-        else if(voiture->posX==36 && valeur_bit(voiture->infos,4)=='1' && valeur_bit(voiture->infos,5)=='0' && valeur_bit(voiture->infos,6)=='0' && valeur_bit(voiture->infos,7)=='1' && voiture->posY>0 )
-            secteur_4(voiture);//Voiture qui va vers le nord 
-        //else if()
-        else if(voiture->posY>=26 && voiture->posX==24){
-            secteur_6(voiture);
-        }
-    
+        
 }
 
 int main(){
@@ -405,10 +467,18 @@ int main(){
 
     place_voiture(&rouge); 
 
-
+    int j=0;
+    VEHICULE voit[12];
+    for(j=0; j<12; j++){
+        voit[j].posX=0;
+        voit[j].posY=0;
+        genere_infos(&voit[j]);
+    }
+    j=0;
+    int t;
     //Boucle infini permettant la visualisation du traffic
     while(i<240){
-
+        place_voiture(&voit[j]);
         //On fait avancer le tram
         bouge_tram2(tramX1,&tramY1, sens_tram, 0);
         bouge_tram2(tramX2,&tramY2, sens_tram, 1);
@@ -433,16 +503,25 @@ int main(){
             feu=1;
         }
 
-        if(rouge.posX>=0 && rouge.posX<=80 && rouge.posY>=0 && rouge.posY<=36)
+        if(rouge.posX>0 && rouge.posX<=80 && rouge.posY>=0 && rouge.posY<=36){
             avance_voiture(&rouge, feu);
+            //printf("%d ; %d", rouge.posX, rouge.posY);
+        }
         else
             affiche_vide(&rouge);
         //printf("toto");
         //affiche_voiture(rouge);
 
 
+        for(t=0; t<j; t++){
+            if(voit[j].posX>0 && voit[j].posX<=80 && voit[j].posY>=0 && voit[j].posY<=36)
+                avance_voiture(&voit[j], feu);
+            else
+                affiche_vide(&voit[j]);
+        }
         usleep(100000);
 
+        j++;
         y2--;
         //On fait avancer notre compteur pour savoir ou on en est dans le temps.
         i++;
